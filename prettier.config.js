@@ -20,5 +20,5 @@ export default {
   bracketSameLine: false,
   jsxBracketSameLine: false,
   vueIndentScriptAndStyle: false,
-  singleAttributePerLine: false,
+  singleAttributePerLine: false
 }

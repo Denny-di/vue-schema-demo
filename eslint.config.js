@@ -3,6 +3,7 @@ import eslint from '@eslint/js'
 import globals from 'globals'
 import tseslint from 'typescript-eslint'
 import eslintPluginVue from 'eslint-plugin-vue'
+import vueEsLintParser from 'vue-eslint-parser'
 import stylistic from '@stylistic/eslint-plugin'
 import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended'
 
@@ -54,6 +55,7 @@ export default tseslint.config(
   {
     files: ['**/*.vue'],
     languageOptions: {
+      parser: vueEsLintParser, // 显式声明 Vue 解析器
       parserOptions: {
         /** typescript项目需要用到这个 */
         parser: tseslint.parser,
