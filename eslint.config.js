@@ -73,7 +73,8 @@ export default tseslint.config(
         {
           shallowOnly: true
         }
-      ]
+      ],
+      'vue/multi-word-component-names': 'off'
     }
   },
 

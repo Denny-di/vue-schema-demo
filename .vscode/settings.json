@@ -4,6 +4,7 @@
   },
   "editor.formatOnSave": true,
   "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "prettier.endOfLine": "lf",
   "files.eol": "\n",
   "eslint.probe": [
     "javascript",

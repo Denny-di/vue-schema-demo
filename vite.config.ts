@@ -9,10 +9,14 @@ export default defineConfig({
   plugins: [
     vue(),
     AutoImport({
-      resolvers: [ElementPlusResolver()]
+      resolvers: [ElementPlusResolver()],
+      vueTemplate: true, // 是否在 vue 模板中自动导入
+      dts: 'src/types/auto-imports.d.ts'
     }),
     Components({
-      resolvers: [ElementPlusResolver()]
+      resolvers: [ElementPlusResolver()],
+      dirs: ['src/views/**'],
+      dts: 'src/types/auto-components.d.ts'
     })
   ]
 })
