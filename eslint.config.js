@@ -7,6 +7,10 @@ import vueEsLintParser from 'vue-eslint-parser'
 import stylistic from '@stylistic/eslint-plugin'
 import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended'
 
+import { createRequire } from 'node:module'
+const require = createRequire(import.meta.url)
+const autoImportEslintConfig = require('./types/.eslintrc-auto-import.json')
+
 export default tseslint.config(
   {
     ignores: ['node_modules', 'dist', 'public']
@@ -29,22 +33,13 @@ export default tseslint.config(
   }),
 
   /**
-   * javascript 规则
-   */
-  {
-    files: ['**/*.{js,mjs,cjs,vue}'],
-    rules: {
-      'no-console': 'warn'
-    }
-  },
-
-  /**
    * 配置全局变量
    */
   {
     languageOptions: {
       globals: {
-        ...globals.browser
+        ...globals.browser,
+        ...autoImportEslintConfig?.globals
       }
     }
   },
@@ -74,7 +69,8 @@ export default tseslint.config(
           shallowOnly: true
         }
       ],
-      'vue/multi-word-component-names': 'off'
+      'vue/multi-word-component-names': 'off',
+      'vue/require-prop-types': 'off'
     }
   },
 
@@ -83,7 +79,21 @@ export default tseslint.config(
    */
   {
     files: ['**/*.{ts,tsx,vue}'],
-    rules: {}
+    rules: {
+      'no-console': 'off',
+      '@typescript-eslint/no-explicit-any': 'off',
+      '@typescript-eslint/no-unused-vars': 'warn'
+    }
+  },
+
+  /**
+   * javascript 规则
+   */
+  {
+    files: ['**/*.{js,mjs,cjs,vue}'],
+    rules: {
+      'no-console': 'off'
+    }
   },
 
   /**

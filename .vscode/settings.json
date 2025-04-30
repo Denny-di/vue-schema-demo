@@ -6,24 +6,11 @@
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "prettier.endOfLine": "lf",
   "files.eol": "\n",
-  "eslint.probe": [
+  "eslint.validate": [
     "javascript",
     "typescript",
     "vue"
   ],
-  "eslint.validate": [
-    "javascript",
-    "vue",
-    "vue-html",
-    "typescript",
-    "typescriptreact",
-    "html",
-    "css",
-    "scss",
-    "less",
-    "json",
-    "jsonc",
-    "json5",
-    "markdown"
-  ],
+  "css.lint.unknownAtRules": "ignore",
+  "scss.lint.unknownAtRules": "ignore"
 }

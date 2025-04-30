@@ -1,5 +1,13 @@
 import { createApp } from 'vue'
 import App from './App.vue'
-import './assets/main.css'
+import setupDirectives from './directives'
+import ElementPlus from 'element-plus'
+import 'element-plus/dist/index.css'
+import './assets/scss/main.scss'
 
-createApp(App).mount('#app')
+const app = createApp(App)
+
+setupDirectives(app)
+
+app.use(ElementPlus)
+app.mount('#app')

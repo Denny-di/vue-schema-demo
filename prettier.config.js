@@ -7,7 +7,7 @@ export default {
   trailingComma: 'none', // 可选值：'none' | 'es5' | 'all'
   singleQuote: true,
   semi: false,
-  printWidth: 80,
+  printWidth: 120,
   arrowParens: 'always',
   proseWrap: 'always',
   endOfLine: 'lf',
