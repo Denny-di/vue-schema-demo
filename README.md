@@ -19,7 +19,8 @@
 - **🔧 复合功能** - 支持分页/排序/多选/树形表格
 
 > 示例图：
-> ![image.png](https://p0-xtjj-private.juejin.cn/tos-cn-i-73owjymdk6/a8f597212dd94404871e5dd8338f70ef~tplv-73owjymdk6-jj-mark-v1:0:0:0:0:5o6Y6YeR5oqA5pyv56S-5Yy6IEAgTHVvYm8=:q75.awebp?policy=eyJ2bSI6MywidWlkIjoiMjU3NjkxMDk4Njc4Nzk2MCJ9&rk3s=f64ab15b&x-orig-authkey=f32326d3454f2ac7e96d3d06cdbb035152127018&x-orig-expires=1747126598&x-orig-sign=IoSLGCUEjxlr6150Zn1DwFEzH%2BM%3D)
+> ![171721C0-EB56-4d15-B4EC-65D0B49D3A2C](https://github.com/user-attachments/assets/deb5b33d-c0ca-489f-b1b8-a1e1b155ec4e)
+
 
 > 先上源码：⭐ [`github`](https://github.com/ddluobo/vue-schema-demo)
 
