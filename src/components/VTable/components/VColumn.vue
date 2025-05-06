@@ -12,7 +12,6 @@ const emit = defineEmits<{
 }>()
 
 const slots = defineSlots()
-const tableSlots = Object.keys(slots)
 
 const tableChange = (prop: string, opt: any = {}) => {
   console.log('table-change =>　', prop, opt)
@@ -30,15 +29,15 @@ const cellChange = (prop: string, opt: any = {}) => {
   <el-table-column v-if="column.children?.length" :label="column.label" :prop="column.prop">
     <VColumn v-for="sub in column.children" :key="sub.prop" :column="sub" @cell-change="cellChange">
       <!-- 自定义插槽 -->
-      <template v-for="(, slotName) in $slots" :key="slotName" #[slotName]="slotProps">
-        <slot :name="slotName" v-bind="slotProps"></slot>
+      <template v-for="(_, slotName) in slots" :key="slotName" #[slotName]="scope">
+        <slot :name="slotName" v-bind="scope" />
       </template>
     </VColumn>
 
     <!-- 自定义列头部 {prop}--header -->
     <template #header="scope">
       <slot
-        v-if="tableSlots.includes(`${column.prop}--header`)"
+        v-if="slots[`${column.prop}--header`]"
         v-bind="scope"
         :name="`${column.prop}--header`"
         :prop="`${column.prop}--header`"
@@ -55,7 +54,7 @@ const cellChange = (prop: string, opt: any = {}) => {
         {{ scope.row[column.prop] }}
       </template>
       <slot
-        v-else-if="scope.$index >= 0 && tableSlots.includes(column.prop)"
+        v-else-if="scope.$index >= 0 && slots[column.prop]"
         v-bind="scope"
         :value="scope.row[column.prop]"
         :row-index="scope.$index"
@@ -87,7 +86,7 @@ const cellChange = (prop: string, opt: any = {}) => {
     <!-- 自定义列头部 {prop}--header -->
     <template #header="scope">
       <slot
-        v-if="tableSlots.includes(`${column.prop}--header`)"
+        v-if="slots[`${column.prop}--header`]"
         v-bind="scope"
         :name="`${column.prop}--header`"
         :prop="`${column.prop}--header`"

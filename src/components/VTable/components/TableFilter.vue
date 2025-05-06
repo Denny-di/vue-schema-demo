@@ -29,16 +29,13 @@ watchEffect(() => {
 
     if (
       item.defaultValue !== undefined &&
-      (form[item.prop] === undefined ||
-        (item.prop?.includes('uuid__') && !form[item.prop]))
+      (form[item.prop] === undefined || (item.prop?.includes('uuid__') && !form[item.prop]))
     ) {
       form[item.prop] = item.defaultValue
     }
 
     if (item.childType) {
-      const opt = item.options?.find(
-        (f: any) => item.prop && f.value === form[item.prop]
-      )
+      const opt = item.options?.find((f: any) => item.prop && f.value === form[item.prop])
       const child = opt?.child ?? { type: item.childType }
       item.child = { ...child, prop: form[item.prop], label: opt?.label }
     }
@@ -104,11 +101,7 @@ defineExpose({
     <el-form ref="formRef" :model="form" :inline="true">
       <template v-for="item in filterList" :key="item.prop">
         <div class="flex items-center">
-          <el-form-item
-            v-if="item.prop"
-            :prop="item.prop"
-            :class="{ 'cascade-select': item.child }"
-          >
+          <el-form-item v-if="item.prop" :prop="item.prop" :class="{ 'cascade-select': item.child }">
             <VFilter
               v-model="form[item.prop]"
               :props="{ clearable: !item.child }"
@@ -119,11 +112,7 @@ defineExpose({
           </el-form-item>
 
           <el-form-item v-if="item.child?.prop">
-            <VFilter
-              v-model="form[item.child.prop]"
-              v-bind="item.child"
-              @change="change(item.child, $event)"
-            />
+            <VFilter v-model="form[item.child.prop]" v-bind="item.child" @change="change(item.child, $event)" />
           </el-form-item>
         </div>
       </template>

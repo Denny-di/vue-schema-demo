@@ -216,18 +216,18 @@ defineExpose({
           </div>
         </div>
         <XTable
-          v-loading="tableLoading"
           ref="xTableRef"
-          :rowData="rowData"
+          v-loading="tableLoading"
+          :row-data="rowData"
           :code="tableCode"
           :columns="columns"
           :total="tableTotal"
+          v-bind="$attrs"
           @cell-change="cellChange"
           @table-change="tableChange"
-          v-bind="$attrs"
         >
-          <template v-for="(, slotName) in $slots" :key="slotName" #[slotName]="slotProps">
-            <slot :name="slotName" v-bind="slotProps"></slot>
+          <template v-for="(_, slotName) in $slots" :key="slotName" #[slotName]="scope">
+            <slot :name="slotName" v-bind="scope"></slot>
           </template>
         </XTable>
       </div>

@@ -25,20 +25,13 @@ const bindProps = computed(() => ({
   multiple,
   placeholder: label,
   props: type === 'el-cascader' ? { multiple, emitPath: false } : undefined,
-  ...bindModels(
-    models.concat(type === 'batch-input' ? ['batch'] : []),
-    modelValue
-  ),
+  ...bindModels(models.concat(type === 'batch-input' ? ['batch'] : []), modelValue),
   ...props
 }))
 </script>
 
 <template>
-  <div
-    class="v-filter"
-    :class="{ [`v-filter--${type}`]: !!type }"
-    :style="width ? `width: ${width}px` : ''"
-  >
+  <div class="v-filter" :class="{ [`v-filter--${type}`]: !!type }" :style="width ? `width: ${width}px` : ''">
     <VFormItem
       v-model="modelValue"
       :type="type"

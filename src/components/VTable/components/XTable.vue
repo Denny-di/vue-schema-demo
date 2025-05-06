@@ -122,8 +122,8 @@ defineExpose({
       @current-change="currentChange"
     >
       <el-table-column v-if="enabledExpand" type="expand" :width="40">
-        <template #default="slotProps">
-          <slot name="expand" v-bind="slotProps"></slot>
+        <template #default="scope">
+          <slot name="expand" v-bind="scope"></slot>
         </template>
       </el-table-column>
 
@@ -145,8 +145,8 @@ defineExpose({
 
       <template v-for="column in columnList" :key="column.prop">
         <VColumn :column="column" :enabled-sort="enabledSort" @cell-change="cellChange" @table-change="tableChange">
-          <template v-for="(, slotName) in $slots" :key="slotName" #[slotName]="slotProps">
-            <slot :name="slotName" v-bind="slotProps"></slot>
+          <template v-for="(_, slotName) in $slots" :key="slotName" #[slotName]="scope">
+            <slot :name="slotName" v-bind="scope"></slot>
           </template>
         </VColumn>
       </template>

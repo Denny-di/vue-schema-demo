@@ -249,14 +249,14 @@ const isEmpty = (val: string | null | undefined) => [undefined, null, ''].includ
       </template> -->
 
       <!-- 自定义插槽 -->
-      <template v-for="slotName in slotsName" :key="slotName" #[slotName]="slotProps">
-        <slot :name="slotName" :prop="prop" v-bind="slotProps"></slot>
+      <template v-for="slotName in slotsName" :key="slotName" #[slotName]="scope">
+        <slot :name="slotName" :prop="prop" v-bind="scope"></slot>
       </template>
     </VTable>
 
     <span v-else-if="type === 'text'" class="truncate" :title="modelValue">{{ modelValue }}</span>
     <template v-else-if="type === 'options'">
-      {{ options?.find((m) => m.value === modelValue)?.label }}
+      {{ options?.find((m: any) => m.value === modelValue)?.label }}
     </template>
 
     <component
@@ -269,8 +269,8 @@ const isEmpty = (val: string | null | undefined) => [undefined, null, ''].includ
       v-on="bindEvents"
     >
       <!-- 自定义插槽 -->
-      <template v-for="slotName in slotsName" :key="slotName" #[slotName]="slotProps">
-        <slot :name="slotName" v-bind="slotProps"></slot>
+      <template v-for="slotName in slotsName" :key="slotName" #[slotName]="scope">
+        <slot :name="slotName" v-bind="scope"></slot>
       </template>
     </component>
   </div>

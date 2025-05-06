@@ -25,22 +25,13 @@ const handle = () => {
 
 defineExpose({
   modelValue,
-  filterParams: computed(() =>
-    prop
-      ? { [prop]: modelValue.value !== '0' ? modelValue.value : undefined }
-      : {}
-  )
+  filterParams: computed(() => (prop ? { [prop]: modelValue.value !== '0' ? modelValue.value : undefined } : {}))
 })
 </script>
 
 <template>
   <el-tabs v-model="modelValue" class="table-tabs" @tab-change="handle">
-    <el-tab-pane
-      v-for="tab in options"
-      :key="tab.value"
-      :label="tab.label"
-      :name="tab.value"
-    />
+    <el-tab-pane v-for="tab in options" :key="tab.value" :label="tab.label" :name="tab.value" />
   </el-tabs>
 </template>
 

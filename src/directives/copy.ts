@@ -1,34 +1,45 @@
-import type { Directive, DirectiveBinding } from 'vue'
+import { type Directive } from 'vue'
 import { ElMessage } from 'element-plus'
-interface ElType extends HTMLElement {
-  copyData: string | number
-  __handleClick__: any
-}
-const copy: Directive = {
-  mounted(el: ElType, binding: DirectiveBinding) {
-    el.copyData = String(binding.value ?? el.innerHTML ?? '')
-    el.addEventListener('dblclick', handleClick)
-  },
-  updated(el: ElType, binding: DirectiveBinding) {
-    el.copyData = String(binding.value ?? el.innerHTML ?? '')
-  },
-  beforeUnmount(el: ElType) {
-    el.removeEventListener('dblclick', el.__handleClick__)
-  }
+
+interface CustomEl extends HTMLElement {
+  __handleClick__?: () => void
+  __copyData__?: string
 }
 
-function handleClick(this: any) {
-  const input = document.createElement('input')
-  input.style.opacity = '0'
-  input.value = this.copyData.toLocaleString()
-  document.body.appendChild(input)
-  input.select()
-  document.execCommand('Copy')
-  document.body.removeChild(input)
-  ElMessage({
-    type: 'success',
-    message: '复制成功'
-  })
+const copy: Directive<CustomEl> = {
+  mounted(el, binding) {
+    // 使用组合式API风格封装逻辑
+    const setup = () => {
+      const copyText = String(binding.value ?? el.textContent ?? '')
+      el.__copyData__ = copyText
+
+      const copyHandler = async () => {
+        try {
+          await navigator?.clipboard?.writeText?.(copyText)
+          ElMessage.success('复制成功')
+        } catch {
+          ElMessage.error('复制失败，请手动复制')
+        }
+      }
+
+      return { copyHandler }
+    }
+
+    const { copyHandler } = setup()
+    el.__handleClick__ = copyHandler
+    el.addEventListener('dblclick', copyHandler)
+  },
+
+  updated(el, binding) {
+    el.__copyData__ = String(binding.value ?? el.textContent ?? '')
+  },
+
+  beforeUnmount(el) {
+    if (el.__handleClick__) {
+      el.removeEventListener('dblclick', el.__handleClick__)
+      delete el.__handleClick__
+    }
+  }
 }
 
 export default copy
