@@ -21,7 +21,7 @@ interface OptType {
  * @returns
  */
 export default function useList(opt: OptType) {
-  const { api, apiParams, pageSize = 50, closeDefaultRequest, beforeRequest, afterRequest } = opt
+  const { api, apiParams, pageSize = 20, closeDefaultRequest, beforeRequest, afterRequest } = opt
 
   const list = ref<any[]>([])
   const loading = ref(false)

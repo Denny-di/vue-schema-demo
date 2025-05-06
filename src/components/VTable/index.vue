@@ -217,11 +217,11 @@ defineExpose({
         </div>
         <XTable
           ref="xTableRef"
+          class="h-[560px]"
           v-loading="tableLoading"
           :row-data="rowData"
           :code="tableCode"
           :columns="columns"
-          :total="tableTotal"
           v-bind="$attrs"
           @cell-change="cellChange"
           @table-change="tableChange"
@@ -230,6 +230,20 @@ defineExpose({
             <slot :name="slotName" v-bind="scope"></slot>
           </template>
         </XTable>
+
+        <div v-if="!hidePagination && tableTotal > 0" class="flex items-center justify-end h-[48px]">
+          <el-pagination
+            v-model:current-page="pagination.pageNo"
+            v-model:page-size="pagination.pageSize"
+            :page-sizes="[20, 50, 100]"
+            :total="tableTotal"
+            layout="total, sizes, prev, pager, next, jumper"
+            background
+            v-bind="pagerProps"
+            @size-change="tableChange('pagination', $event)"
+            @current-change="tableChange('pagination', $event)"
+          />
+        </div>
       </div>
     </div>
   </div>

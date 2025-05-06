@@ -4,17 +4,14 @@ import { ElMessage } from 'element-plus'
 
 const tabsProps = {
   prop: 'status',
-  options: [
-    { label: '基础' }
-    // { label: '', value: '1' },
-    // { label: '已办', value: '2' }
-  ]
+  options: [{ label: '表格' }]
 }
 
 const options = Array.from({ length: 100 }).map((_, i) => ({
   label: `选项${i + 1}`,
   value: `option${i + 1}`
 }))
+
 const treeData = [
   {
     value: '1',
@@ -53,32 +50,6 @@ const treeData = [
           {
             value: '2-2-1',
             label: 'Level three 2-2-1'
-          }
-        ]
-      }
-    ]
-  },
-  {
-    value: '3',
-    label: 'Level one 3',
-    children: [
-      {
-        value: '3-1',
-        label: 'Level two 3-1',
-        children: [
-          {
-            value: '3-1-1',
-            label: 'Level three 3-1-1'
-          }
-        ]
-      },
-      {
-        value: '3-2',
-        label: 'Level two 3-2',
-        children: [
-          {
-            value: '3-2-1',
-            label: 'Level three 3-2-1'
           }
         ]
       }
@@ -127,18 +98,18 @@ const filterOptions = computed<FilterOptionType[]>(() => [
 ])
 
 const actionOptions = computed<ActionOptionType[]>(() => [
-  { label: '新增', prop: 'add', icon: CirclePlus },
+  { label: '新增', prop: 'add', icon: markRaw(CirclePlus) },
   {
     label: '编辑',
     prop: 'edit',
-    icon: Edit,
+    icon: markRaw(Edit),
     isCheckRow: true,
     props: { type: 'default' }
   },
   {
     label: '删除',
     prop: 'delete',
-    icon: Delete,
+    icon: markRaw(Delete),
     reconfirm: true,
     props: { type: 'danger' }
   }
@@ -161,7 +132,7 @@ const columns = computed<ColumnType[]>(() => [
   operateColumn(
     [
       { label: '详情', prop: 'detail', type: 'primary', unfold: true },
-      { label: '删除', prop: 'delete', type: 'danger', unfold: true },
+      { label: '删除', prop: 'delete', type: 'danger', icon: markRaw(Delete), unfold: true },
       { label: '详情2', prop: 'detail2', type: 'success' },
       { label: '详情3', prop: 'detail3', type: 'warning' }
     ],
@@ -169,41 +140,44 @@ const columns = computed<ColumnType[]>(() => [
   )
 ])
 
-const rowData = ref([
-  {
-    xxx1: '双击单元格复制文本',
-    age: 18,
-    address: 'New York No. 1 Lake Park',
-    status: '基础',
-    date: new Date().getTime(),
-    a: 100,
-    b: 2,
-    c: 3,
-    d: 4,
-    e: 5,
-    customSlot: '插槽',
-    remark: '备注'
-  }
-])
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 
-console.log(1111, rowData.value)
+const getList = async () => {
+  await sleep(1000)
+  return {
+    list: Array.from({ length: 20 }).map((_, i) => ({
+      xxx1: '双击单元格复制文本' + i,
+      age: 18,
+      address: 'New York No. 1 Lake Park',
+      status: '基础',
+      date: new Date().getTime(),
+      a: 100,
+      b: 2,
+      c: 3,
+      d: 4,
+      e: 5,
+      customSlot: '插槽'
+    })),
+    total: 100
+  }
+}
 
 const propAction = {
   add: () => {
     ElMessage.success('新增')
   },
-  delete: (opt: any) => {
-    const { rowIndex } = opt
-    rowData.value.splice(rowIndex, 1)
+  delete: async (opt: any) => {
+    console.log('删除', opt)
+    ElMessage.success('删除')
   },
   detail: () => {
     ElMessage.success('打开详情')
   }
 }
-const cellChange = (prop: string, opt: any) => {
+const cellChange = async (prop: string, opt: any) => {
   console.log('cell-change =>', prop, opt)
   const { cb } = opt
-  propAction[prop as keyof typeof propAction]?.(opt)
+  await propAction[prop as keyof typeof propAction]?.(opt)
   cb?.()
 }
 </script>
@@ -211,7 +185,7 @@ const cellChange = (prop: string, opt: any) => {
 <template>
   <div class="table-demo pr-5 pl-5">
     <VTable
-      :data="rowData"
+      :api="getList"
       :columns="columns"
       :tabs-props="tabsProps"
       :filter-options="filterOptions"

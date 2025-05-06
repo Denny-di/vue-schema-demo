@@ -21,7 +21,6 @@ export interface ColumnType {
   formatter?: (row: any, column: any, cellValue: any, index: number) => VNode | string
   hidden?: boolean
   sort?: number
-  switchMode?: string | number
   textType?: 'primary' | 'success' | 'warning' | 'danger' | 'info'
   customCell?: {
     value?: Component
@@ -94,7 +93,7 @@ export interface OperateOptionType {
   label: string
   prop: string
   type?: 'primary' | 'danger' | 'default' | 'warning' | 'success' | 'info'
-  icon?: string
+  icon?: string | Component
   unfold?: boolean
   hidden?: boolean
   disabled?: boolean

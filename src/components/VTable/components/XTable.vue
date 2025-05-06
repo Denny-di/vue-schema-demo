@@ -14,7 +14,7 @@ interface Props {
   enabledSelection?: boolean
   enabledSingle?: boolean
   summaryProps?: string[]
-  hidePagination?: boolean
+  rowKey?: string
   selectable?: (row: any, index?: number) => boolean
 }
 
@@ -26,6 +26,7 @@ const {
   cellWidth,
   minCellWidth = 100,
   summaryProps,
+  rowKey = 'id',
   selectable
 } = defineProps<Props>()
 
@@ -73,11 +74,11 @@ const toggleSelection = (rows: any[]) => {
 const currentRowById = ref<number | string>()
 const currentChange = (currentRow: any, oldCurrentRow?: any) => {
   if (!currentRow || (selectable && !selectable(currentRow))) return
-  currentRowById.value = currentRow.id
+  currentRowById.value = currentRow[rowKey]
   emit('current-change', currentRow, oldCurrentRow)
 }
 
-const getCurrentRow = () => rowData?.find((f: any) => f.id === currentRowById.value)
+const getCurrentRow = () => rowData?.find((f: any) => f[rowKey] === currentRowById.value)
 
 const rowClassName = ({ row }: any) => (selectable && !selectable(row) ? 'is-disabled' : '')
 
@@ -133,7 +134,7 @@ defineExpose({
 
       <el-table-column v-if="enabledSingle" :width="40">
         <template #default="{ row, $index }">
-          <el-radio v-model="currentRowById" :label="row.id" :disabled="selectable && !selectable(row, $index)">
+          <el-radio v-model="currentRowById" :label="row[rowKey]" :disabled="selectable && !selectable(row, $index)">
             &nbsp;
           </el-radio>
         </template>
@@ -155,15 +156,6 @@ defineExpose({
         <slot :name="slotName"></slot>
       </template>
     </el-table>
-
-    <!-- <Pagination
-      v-if="!hidePagination"
-      v-model:page="pagination.pageNo"
-      v-model:limit="pagination.pageSize"
-      :total="tableTotal"
-      v-bind="pagerProps"
-      @pagination="tableChange('pagination')"
-    /> -->
   </div>
 </template>
 
