@@ -8,6 +8,9 @@ import zhCn from 'element-plus/es/locale/lang/zh-cn'
       <el-tab-pane label="Table">
         <TableDemo />
       </el-tab-pane>
+      <el-tab-pane label="Form">
+        <FormDemo />
+      </el-tab-pane>
     </el-tabs>
   </el-config-provider>
 </template>

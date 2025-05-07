@@ -21,8 +21,10 @@
 > 示例图：
 > ![171721C0-EB56-4d15-B4EC-65D0B49D3A2C](https://github.com/user-attachments/assets/deb5b33d-c0ca-489f-b1b8-a1e1b155ec4e)
 
-
 > 先上源码：⭐ [`github`](https://github.com/ddluobo/vue-schema-demo)
+
+[![Downloads](https://img.shields.io/github/downloads/ddluobo/vue-schema-demo/total)](https://github.com/ddluobo/vue-schema-demo/releases)
+[![Stars](https://img.shields.io/github/stars/ddluobo/vue-schema-demo?style=social)](https://github.com/ddluobo/vue-schema-demo/stargazers)
 
 ## 项目优势
 

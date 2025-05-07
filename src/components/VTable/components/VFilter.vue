@@ -24,8 +24,8 @@ const change = () => nextTick(() => emit('change', modelValue.value))
 const bindProps = computed(() => ({
   multiple,
   placeholder: label,
-  props: type === 'el-cascader' ? { multiple, emitPath: false } : undefined,
-  ...bindModels(models.concat(type === 'batch-input' ? ['batch'] : []), modelValue),
+  props: type === 'el-cascader' ? { multiple } : undefined,
+  ...bindModels(models, modelValue),
   ...props
 }))
 </script>

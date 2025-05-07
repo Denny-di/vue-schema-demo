@@ -1,11 +1,5 @@
 <script setup lang="ts" name="VFormItem">
 import { isEqual } from 'lodash-es'
-// import { FormComponentType, ModelType } from '../types'
-
-// import { BatchInput } from '@/components/VTable'
-// import { UploadFile } from '@/components/UploadFile'
-// import { dayjs, ElSelectV2 } from 'element-plus'
-
 interface Props {
   type?: FormComponentType
   prop?: string
@@ -95,16 +89,9 @@ const modelValue = computed({
 })
 
 const componentMap: CmponentsType = {
-  // 'el-input': markRaw(ElInput),
-  // 'el-input-number': markRaw(ElInputNumber),
-  // 'el-select': markRaw(ElSelect),
-  // 'el-select-v2': markRaw(ElSelectV2),
   textarea: 'el-input',
   date: 'el-date-picker',
   daterange: 'el-date-picker'
-  // 'el-select-v2': markRaw(ElSelectV2),
-  // 'upload-file': markRaw(UploadFile),
-  // 'batch-input': markRaw(BatchInput),
 }
 
 const propsMap: CmponentsType = {
@@ -177,7 +164,15 @@ const bindProps = computed(() => {
   }
   if (['el-select-v2', 'el-cascader'].includes(type)) {
     p.options = options.value ?? []
+  } else if (['el-tree-select'].includes(type)) {
+    p.data = options.value ?? []
   }
+
+  if (type === 'el-cascader' && !p.props?.emitPath) {
+    if (p.props) p.props.emitPath = false
+    else p.props = { emitPath: false }
+  }
+
   if (p.max && p.max < 0) p.max = 999999999
   return p
 })
@@ -244,9 +239,9 @@ const isEmpty = (val: string | null | undefined) => [undefined, null, ''].includ
       @cell-change="change"
       v-on="bindEvents"
     >
-      <!-- <template v-if="appendProps" #append>
-        <slot v-if="appendProps?.isSlot" name="append-slot"></slot>
-      </template> -->
+      <template v-if="appendProps" #append>
+        <slot name="append-slot"></slot>
+      </template>
 
       <!-- 自定义插槽 -->
       <template v-for="slotName in slotsName" :key="slotName" #[slotName]="scope">
@@ -268,7 +263,6 @@ const isEmpty = (val: string | null | undefined) => [undefined, null, ''].includ
       @change="change(prop, { value: $event })"
       v-on="bindEvents"
     >
-      <!-- 自定义插槽 -->
       <template v-for="slotName in slotsName" :key="slotName" #[slotName]="scope">
         <slot :name="slotName" v-bind="scope"></slot>
       </template>

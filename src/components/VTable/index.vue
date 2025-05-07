@@ -5,6 +5,7 @@ interface Props {
   api?: (...args: any[]) => Promise<any>
   beforeRequest?: (params: any) => Promise<boolean | void>
   afterRequest?: (rows: any) => void
+  size?: 'small' | 'large' | 'medium' | 'auto'
   closeDefaultRequest?: boolean
   apiParams?: any
   data?: any[]
@@ -176,7 +177,13 @@ defineExpose({
 </script>
 
 <template>
-  <div class="v-table">
+  <div
+    class="v-table"
+    :class="{
+      'v-table--page': !size,
+      [`v-table--${size}`]: !!size
+    }"
+  >
     <slot name="table-header"></slot>
 
     <slot name="table-tabs">
@@ -217,7 +224,6 @@ defineExpose({
         </div>
         <XTable
           ref="xTableRef"
-          class="h-[560px]"
           v-loading="tableLoading"
           :row-data="rowData"
           :code="tableCode"
@@ -240,8 +246,8 @@ defineExpose({
             layout="total, sizes, prev, pager, next, jumper"
             background
             v-bind="pagerProps"
-            @size-change="tableChange('pagination', $event)"
-            @current-change="tableChange('pagination', $event)"
+            @size-change="tableChange('pagination')"
+            @current-change="tableChange('pagination')"
           />
         </div>
       </div>
@@ -249,4 +255,47 @@ defineExpose({
   </div>
 </template>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+.v-table {
+  background-color: #fff;
+  display: flex;
+  flex-direction: column;
+  height: 560px;
+  width: 100%;
+  &--page {
+    height: 100%;
+    padding: 3px 6px 6px 6px;
+    &:has(.tree-filter) {
+      .table-content {
+        border: 1px solid rgb(232, 232, 232);
+        padding: 12px 0 12px 10px;
+        margin-right: 6px;
+        border-radius: 6px;
+      }
+    }
+  }
+  &--large,
+  &--medium,
+  &--small,
+  &--auto {
+    ::v-deep(.el-table__empty-text) {
+      padding-top: 0 !important;
+      height: initial !important;
+      background: none;
+    }
+  }
+  &--large {
+    height: 420px;
+  }
+  &--medium {
+    height: 320px;
+  }
+  &--small {
+    height: 200px;
+  }
+  &--auto {
+    height: auto;
+    max-height: 560px;
+  }
+}
+</style>
