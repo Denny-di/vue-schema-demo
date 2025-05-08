@@ -3,7 +3,7 @@ name: Deploy Vue app to GitHub Pages
 on:
   push:
     branches:
-      - main
+      - main # 推送到 main 分支时触发部署
 
 jobs:
   deploy:
@@ -32,3 +32,4 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./dist
+          publish_branch: gh-pages # 显式指定目标分支
