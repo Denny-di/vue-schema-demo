@@ -7,6 +7,7 @@ import Components from 'unplugin-vue-components/vite'
 import { resolve } from 'path'
 
 export default defineConfig({
+  base: process.env.NODE_ENV === 'production' ? '/vue-schema-demo/' : '/',
   resolve: {
     alias: {
       '@': resolve(__dirname, './src')
