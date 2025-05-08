@@ -10,19 +10,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Clean cache
+        run: rm -rf node_modules && rm yarn.lock
 
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 18
-
-      - name: Cache dependencies
-        uses: actions/cache@v3
-        with:
-          path: ~/.cache/yarn
-          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-yarn-
+          node-version: 20
 
       - name: Install dependencies
         run: yarn install
