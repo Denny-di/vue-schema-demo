@@ -72,7 +72,7 @@ const currentTab = computed(() => tabsProps?.options?.find((f) => f.value === ta
 const switchMode = computed(() => tableSwitchRef.value?.modelValue)
 const currentMode = computed(() => switchProps?.options?.find((f) => f.value === switchMode.value))
 
-const tableCode = computed(() => currentTab.value?.code ?? switchMode.value ?? code)
+const tableCode = computed(() => currentTab.value?.code ?? switchMode.value ?? code ?? tabMode.value)
 const fetchApi = computed(() => currentTab.value?.api ?? currentMode.value?.api ?? api)
 
 const columns = computed(() => currentTab.value?.columns ?? currentMode.value?.columns ?? columnsList ?? [])

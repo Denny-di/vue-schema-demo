@@ -61,7 +61,7 @@ const filterOptions = computed<FilterOptionType[]>(() => [
   { prop: 'xxx1', type: 'el-input', label: '输入框' },
   { prop: 'xxx2', type: 'el-select', label: '下拉框', multiple: true, options },
   { prop: 'xxx3', type: 'el-select-v2', label: '单选虚拟下拉框', options },
-  { prop: 'xxx4', type: 'el-input-number', label: '数字输入框' },
+  { prop: 'xxx9', type: 'el-input-number', label: '数字输入框' },
   {
     prop: 'xxx6',
     type: 'el-tree-select',

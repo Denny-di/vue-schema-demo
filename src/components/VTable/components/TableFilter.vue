@@ -1,11 +1,4 @@
 <script setup lang="ts" name="TableFilter">
-// 生成UUID
-const generateUUID = () =>
-  'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
-    const r = (Math.random() * 16) | 0
-    const v = c === 'x' ? r : (r & 0x3) | 0x8
-    return v.toString(16)
-  })
 interface Props {
   filterOptions?: FilterOptionType[]
 }
@@ -17,7 +10,7 @@ const emit = defineEmits(['change'])
 const filterTeleportRef = ref()
 provide('filterTeleportRef', filterTeleportRef)
 
-const form = reactive<any>({})
+const form = ref<any>({})
 
 const filterList = ref<FilterOptionType[]>([])
 
@@ -25,19 +18,18 @@ watchEffect(() => {
   filterList.value = filterOptions.filter((f) => !f.hidden)
 
   for (const item of filterList.value) {
-    if (!item.prop) item.prop = `uuid__${generateUUID()}`
+    if (!item.prop) {
+      item.prop = `custom__${item.options?.map((f) => f.value).join('_')}`
+    }
 
-    if (
-      item.defaultValue !== undefined &&
-      (form[item.prop] === undefined || (item.prop?.includes('uuid__') && !form[item.prop]))
-    ) {
-      form[item.prop] = item.defaultValue
+    if (item.defaultValue !== undefined && form.value[item.prop] === undefined) {
+      form.value[item.prop] = item.defaultValue
     }
 
     if (item.childType) {
-      const opt = item.options?.find((f: any) => item.prop && f.value === form[item.prop])
+      const opt = item.options?.find((f) => item.prop && f.value === form.value[item.prop])
       const child = opt?.child ?? { type: item.childType }
-      item.child = { ...child, prop: form[item.prop], label: opt?.label }
+      item.child = { ...child, prop: form.value[item.prop], label: opt?.label }
     }
   }
 })
@@ -45,26 +37,28 @@ watchEffect(() => {
 const formRef = ref()
 
 const change = (item?: Partial<FilterOptionType>, value?: any) => {
-  const { prop, child, clearFields } = item ?? {}
+  const { prop, child, clearFields, options } = item ?? {}
 
-  console.log('TableFilter change => ', prop, value, form)
+  console.log('TableFilter change => ', prop, value, form.value)
   if (clearFields?.length) {
     for (const key of clearFields) {
-      form[key] = null
+      delete form.value[key]
     }
   }
-  const key = child?.prop
-  if (key) {
-    if (!form[key] || !form[key]?.length) return
-    form[key] = undefined
+
+  const childProp = child?.prop
+  if (childProp && options?.length) {
+    const flag = !form.value[childProp] || !form.value[childProp]?.length
+    for (const opt of options) {
+      delete form.value[opt.value as string]
+    }
+    if (flag) return
   }
   emit('change', prop ? { [prop]: value, prop, value } : undefined)
 }
 
 const clear = () => {
-  for (const key in form) {
-    form[key] = null
-  }
+  form.value = {}
 }
 
 const reset = () => {
@@ -74,16 +68,16 @@ const reset = () => {
 
 const filterParams = computed(() => {
   const params: any = {}
-  for (const key in form) {
-    if (key.includes('uuid__')) continue
+  for (const key in form.value) {
+    if (key.includes('custom__')) continue
 
-    if (form[key]?.length && key.includes('-')) {
+    if (form.value[key]?.length && key.includes('-')) {
       const keys = key.split('-')
       for (let i = 0; i < keys.length; i++) {
-        params[keys[i]] = form[key][i]
+        params[keys[i]] = form.value[key][i]
       }
     } else {
-      params[key] = form[key]
+      params[key] = form.value[key]
     }
   }
   return params

@@ -76,7 +76,7 @@ export const calcFormatter = (row: any, column: any) => {
     const expr = column.property
     const scope = Object.keys(row).reduce((acc: any, key) => {
       const val = Number(row[key])
-      acc[key] = val >= 0 ? val : NaN // 保留原符数校验逻辑
+      acc[key] = Number.isFinite(val) ? val : 0
       return acc
     }, {})
     return mathFormat(evaluate(expr, scope)) as any
