@@ -274,16 +274,6 @@ defineExpose({
       }
     }
   }
-  &--large,
-  &--medium,
-  &--small,
-  &--auto {
-    ::v-deep(.el-table__empty-text) {
-      padding-top: 0 !important;
-      height: initial !important;
-      background: none;
-    }
-  }
   &--large {
     height: 420px;
   }

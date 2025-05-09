@@ -101,7 +101,7 @@ const handle = async (item: OperateOptionType) => {
     }
     .el-button.is-disabled {
       &.el-button--danger {
-        color: var(--el-color-danger-light-5) !important;
+        color: var(--el-color-danger-light-5);
       }
     }
   }

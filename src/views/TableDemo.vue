@@ -1,61 +1,12 @@
 <script setup lang="ts" name="TableDemo">
 import { Delete, Edit, CirclePlus } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
+import { options, treeData } from './data'
 
 const tabsProps = {
   prop: 'status',
   options: [{ label: '表格' }]
 }
-
-const options = Array.from({ length: 100 }).map((_, i) => ({
-  label: `选项${i + 1}`,
-  value: `option${i + 1}`
-}))
-
-const treeData = [
-  {
-    value: '1',
-    label: 'Level one 1',
-    children: [
-      {
-        value: '1-1',
-        label: 'Level two 1-1',
-        children: [
-          {
-            value: '1-1-1',
-            label: 'Level three 1-1-1'
-          }
-        ]
-      }
-    ]
-  },
-  {
-    value: '2',
-    label: 'Level one 2',
-    children: [
-      {
-        value: '2-1',
-        label: 'Level two 2-1',
-        children: [
-          {
-            value: '2-1-1',
-            label: 'Level three 2-1-1'
-          }
-        ]
-      },
-      {
-        value: '2-2',
-        label: 'Level two 2-2',
-        children: [
-          {
-            value: '2-2-1',
-            label: 'Level three 2-2-1'
-          }
-        ]
-      }
-    ]
-  }
-]
 
 const filterOptions = computed<FilterOptionType[]>(() => [
   { prop: 'xxx1', type: 'el-input', label: '输入框' },
@@ -66,7 +17,7 @@ const filterOptions = computed<FilterOptionType[]>(() => [
     prop: 'xxx6',
     type: 'el-tree-select',
     label: '树形下拉框',
-    props: { data: treeData }
+    options: treeData
   },
   {
     type: 'el-select',

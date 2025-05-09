@@ -16,6 +16,7 @@ const model = defineModel<any>('model')
 const change = (...args: any[]) => emit('change', ...args)
 
 const formRef = ref()
+
 const validate = async () => {
   console.log('validate form =>', model.value)
   return await formRef.value?.validate()

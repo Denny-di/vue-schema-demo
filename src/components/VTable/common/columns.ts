@@ -1,4 +1,5 @@
 import OperateCell from '@/components/VTable/components/cell/OperateCell.vue'
+import VFormCell from '@/components/VForm/components/VFormCell.vue'
 
 /**
  * 操作列
@@ -14,4 +15,14 @@ export const operateColumn = (options: OperateOptionType[], col?: Partial<Column
   sortable: false,
   customCell: { value: markRaw(OperateCell), options, ...col?.customCell },
   ...col
+})
+
+/**
+ * 表单 单元格
+ * @param col 列配置
+ */
+export const formCellColumn = (col: ColumnType) => ({
+  minWidth: 150,
+  ...col,
+  customCell: { value: markRaw(VFormCell), ...col.customCell }
 })
