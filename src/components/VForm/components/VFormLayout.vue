@@ -49,7 +49,6 @@ const change = (...args: any[]) => emit('change', ...args)
         <el-form-item v-else class="w-full mr-0" :label="item.label" :prop="item.prop" v-bind="item.itemProps">
           <slot v-if="slotsName.includes(item.prop)" :name="item.prop" v-bind="item"> </slot>
           <VFormItem v-else v-model="model[item.prop]" v-bind="item" @change="change">
-            <!-- 自定义插槽 -->
             <template v-for="slotName in slotsName" :key="slotName" #[slotName]="slotProps">
               <slot :name="slotName" v-bind="slotProps"></slot>
             </template>
