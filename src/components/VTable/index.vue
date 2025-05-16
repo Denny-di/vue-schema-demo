@@ -1,5 +1,5 @@
 <script setup lang="ts" name="VTable">
-import { ElMessage, ElMessageBox } from 'element-plus'
+import { ElMessageBox } from 'element-plus'
 
 interface Props {
   api?: (...args: any[]) => Promise<any>

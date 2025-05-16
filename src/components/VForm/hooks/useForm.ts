@@ -1,5 +1,3 @@
-import { ElMessage } from 'element-plus'
-
 interface OptType {
   emit?: any
 }

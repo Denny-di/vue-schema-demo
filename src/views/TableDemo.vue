@@ -51,13 +51,6 @@ const filterOptions = computed<FilterOptionType[]>(() => [
 const actionOptions = computed<ActionOptionType[]>(() => [
   { label: '新增', prop: 'add', icon: markRaw(CirclePlus) },
   {
-    label: '编辑',
-    prop: 'edit',
-    icon: markRaw(Edit),
-    isCheckRow: true,
-    props: { type: 'default' }
-  },
-  {
     label: '删除',
     prop: 'delete',
     icon: markRaw(Delete),
@@ -82,8 +75,9 @@ const columns = computed<ColumnType[]>(() => [
   },
   operateColumn(
     [
+      { label: '编辑', prop: 'edit', icon: markRaw(Edit), unfold: true },
       { label: '详情', prop: 'detail', type: 'primary', unfold: true },
-      { label: '删除', prop: 'delete', type: 'danger', icon: markRaw(Delete), unfold: true },
+      { label: '删除', prop: 'delete', type: 'danger' },
       { label: '详情2', prop: 'detail2', type: 'success' },
       { label: '详情3', prop: 'detail3', type: 'warning' }
     ],
@@ -97,6 +91,7 @@ const getList = async () => {
   await sleep(1000)
   return {
     list: Array.from({ length: 20 }).map((_, i) => ({
+      id: i + 1,
       xxx1: '双击单元格复制文本' + i,
       age: 18,
       address: 'New York No. 1 Lake Park',
@@ -112,17 +107,22 @@ const getList = async () => {
     total: 100
   }
 }
-
+const VFormDialogRef = ref()
 const propAction = {
   add: () => {
-    ElMessage.success('新增')
+    VFormDialogRef.value?.open('add')
   },
-  delete: async (opt: any) => {
+  edit: (opt?: any) => {
+    const { row } = opt ?? {}
+    VFormDialogRef.value?.open('edit', row)
+  },
+  delete: async (opt?: any) => {
     console.log('删除', opt)
     ElMessage.success('删除')
   },
-  detail: () => {
-    ElMessage.success('打开详情')
+  detail: (opt?: any) => {
+    const { row } = opt ?? {}
+    VFormDialogRef.value?.open('detail', row)
   }
 }
 const cellChange = async (prop: string, opt: any) => {
@@ -131,16 +131,24 @@ const cellChange = async (prop: string, opt: any) => {
   await propAction[prop as keyof typeof propAction]?.(opt)
   cb?.()
 }
+
+const VTableRef = ref()
+const refresh = () => {
+  ElMessage.success('刷新表格')
+  VTableRef.value?.initList()
+}
 </script>
 
 <template>
   <div class="table-demo pr-5 pl-5">
     <VTable
+      ref="VTableRef"
       :api="getList"
       :columns="columns"
       :tabs-props="tabsProps"
       :filter-options="filterOptions"
       :action-options="actionOptions"
+      enabled-selection
       @cell-change="cellChange"
     >
       <template #customSlot="{ value }">
@@ -149,6 +157,8 @@ const cellChange = async (prop: string, opt: any) => {
         </el-button>
       </template>
     </VTable>
+
+    <CreateDialog ref="VFormDialogRef" @refresh="refresh"></CreateDialog>
   </div>
 </template>
 
