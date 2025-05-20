@@ -4,7 +4,15 @@ import { cascaderOptions, options, treeData } from './data'
 
 const emit = defineEmits(['refresh'])
 
-const { form, formRef, visible, loading, formType, isDetail, getDetail, success, close } = useForm({
+const titleMap = {
+  add: '新增',
+  edit: '编辑',
+  detail: '详情'
+}
+
+type TitleType = keyof typeof titleMap
+
+const { form, formRef, visible, loading, formType, isDetail, getDetail, success, close } = useForm<TitleType>({
   emit
 })
 
@@ -364,14 +372,6 @@ const init = async () => {
   }
 }
 
-const titleMap = {
-  add: '新增',
-  edit: '编辑',
-  detail: '详情'
-}
-
-type TitleType = keyof typeof titleMap
-
 const open = (key: TitleType, opt: any = {}) => {
   visible.value = true
   formType.value = key
@@ -394,7 +394,7 @@ defineExpose({
     :api="api"
     :api-params="apiParams"
     :loading="loading"
-    :title="titleMap[formType as TitleType]"
+    :title="titleMap[formType]"
     :panel="panel"
     :is-detail="isDetail"
     @close="close"

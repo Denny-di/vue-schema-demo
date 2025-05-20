@@ -4,7 +4,7 @@ interface OptType {
 
 type ApiType = (params?: any) => Promise<any>
 
-export default function useForm(opt?: OptType) {
+export default function useForm<T extends string>(opt?: OptType) {
   const { emit } = opt ?? {}
   const form = ref<any>({})
   const formRef = ref()
@@ -12,7 +12,7 @@ export default function useForm(opt?: OptType) {
   const loading = ref(false)
   const isFinished = ref(false)
 
-  const formType = ref<string>('')
+  const formType = ref<T>('' as T)
 
   const isAdd = computed(() => !['edit', 'detail'].some((type) => formType.value?.includes(type)))
   const isEdit = computed(() => formType.value?.includes('edit'))
