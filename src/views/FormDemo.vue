@@ -18,6 +18,12 @@ const schema = computed(() => [
     options: cascaderOptions
   },
   {
+    label: 'el-tree-select',
+    prop: 'el-tree-select',
+    type: 'el-tree-select',
+    options: treeData
+  },
+  {
     label: '个人信息',
     type: 'el-tabs',
     options: [

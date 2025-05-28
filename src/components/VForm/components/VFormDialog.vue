@@ -85,11 +85,11 @@ defineExpose({
       <slot v-if="$slots?.header" name="header"></slot>
       <slot name="content">
         <VFormPanel v-if="isDetail" v-bind="$attrs">
-          <slot></slot>
+          <template v-for="slotName in slotsName" :key="slotName" #[slotName]="slotProps">
+            <slot :name="slotName" v-bind="slotProps"></slot>
+          </template>
         </VFormPanel>
         <VForm v-else ref="VFormRef" :disabled="disabled" v-bind="$attrs" @change="change">
-          <slot></slot>
-          <!-- 自定义插槽 -->
           <template v-for="slotName in slotsName" :key="slotName" #[slotName]="slotProps">
             <slot :name="slotName" v-bind="slotProps"></slot>
           </template>
