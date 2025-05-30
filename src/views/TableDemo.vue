@@ -87,12 +87,12 @@ const columns = computed<ColumnType[]>(() => [
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 
-const getList = async () => {
+const getList = async (params: any) => {
   await sleep(1000)
   return {
-    list: Array.from({ length: 20 }).map((_, i) => ({
+    list: Array.from({ length: params.pageSize }).map((_, i) => ({
       id: i + 1,
-      xxx1: '双击单元格复制文本' + i,
+      xxx1: '双击单元格复制文本' + (i + 1),
       age: 18,
       address: 'New York No. 1 Lake Park',
       status: '基础',
@@ -104,7 +104,7 @@ const getList = async () => {
       e: 5,
       customSlot: '插槽'
     })),
-    total: 100
+    total: 1000
   }
 }
 const VFormDialogRef = ref()
