@@ -130,13 +130,197 @@ const schema = computed(() => [
         ]
       },
       {
+        label: 'table：大量数据急速渲染',
+        children: [
+          {
+            prop: 'rowData2',
+            type: 'table',
+            props: {
+              height: 600,
+              columns: [
+                formCellColumn({
+                  label: '姓名',
+                  prop: 'name',
+                  customCell: { type: 'el-input', rules: rules.name }
+                }),
+                formCellColumn({
+                  label: '年龄',
+                  prop: 'age',
+                  customCell: { type: 'el-input-number', props: { min: 0, max: 100 } }
+                }),
+                formCellColumn({
+                  label: '生日',
+                  prop: 'birthday',
+                  width: 200,
+                  customCell: { type: 'date', props: { disabledDate: (time: any) => time.getTime() > Date.now() } }
+                }),
+                formCellColumn({
+                  label: 'el-select-v2',
+                  prop: 'hobby',
+                  customCell: {
+                    type: 'el-select-v2',
+                    options
+                  }
+                }),
+                formCellColumn({
+                  label: 'el-select',
+                  prop: 'el-select',
+                  customCell: {
+                    type: 'el-select',
+                    options
+                  }
+                }),
+                formCellColumn({
+                  label: 'el-select-v2',
+                  prop: 'hobby',
+                  customCell: {
+                    type: 'el-select-v2',
+                    options
+                  }
+                }),
+                formCellColumn({
+                  label: 'el-select',
+                  prop: 'el-select',
+                  customCell: {
+                    type: 'el-select',
+                    options
+                  }
+                }),
+                formCellColumn({
+                  label: 'el-select-v2',
+                  prop: 'hobby',
+                  customCell: {
+                    type: 'el-select-v2',
+                    options
+                  }
+                }),
+                formCellColumn({
+                  label: 'el-select',
+                  prop: 'el-select',
+                  customCell: {
+                    type: 'el-select',
+                    options
+                  }
+                }),
+                formCellColumn({
+                  label: 'el-select-v2',
+                  prop: 'hobby',
+                  customCell: {
+                    type: 'el-select-v2',
+                    options
+                  }
+                }),
+                formCellColumn({
+                  label: 'el-select',
+                  prop: 'el-select',
+                  customCell: {
+                    type: 'el-select',
+                    options
+                  }
+                }),
+                formCellColumn({
+                  label: 'el-select-v2',
+                  prop: 'hobby',
+                  customCell: {
+                    type: 'el-select-v2',
+                    options
+                  }
+                }),
+                formCellColumn({
+                  label: 'el-select',
+                  prop: 'el-select',
+                  customCell: {
+                    type: 'el-select',
+                    options
+                  }
+                }),
+                formCellColumn({
+                  label: 'el-select-v2',
+                  prop: 'hobby',
+                  customCell: {
+                    type: 'el-select-v2',
+                    options
+                  }
+                }),
+                formCellColumn({
+                  label: 'el-select',
+                  prop: 'el-select',
+                  customCell: {
+                    type: 'el-select',
+                    options
+                  }
+                }),
+                formCellColumn({
+                  label: 'el-select-v2',
+                  prop: 'hobby',
+                  customCell: {
+                    type: 'el-select-v2',
+                    options
+                  }
+                }),
+                formCellColumn({
+                  label: 'el-select',
+                  prop: 'el-select',
+                  customCell: {
+                    type: 'el-select',
+                    options
+                  }
+                }),
+                formCellColumn({
+                  label: 'el-select-v2',
+                  prop: 'hobby',
+                  customCell: {
+                    type: 'el-select-v2',
+                    options
+                  }
+                }),
+                formCellColumn({
+                  label: 'el-select',
+                  prop: 'el-select',
+                  customCell: {
+                    type: 'el-select',
+                    options
+                  }
+                }),
+                formCellColumn({
+                  label: 'el-select-v2',
+                  prop: 'hobby',
+                  customCell: {
+                    type: 'el-select-v2',
+                    options
+                  }
+                }),
+                formCellColumn({
+                  label: 'el-select',
+                  prop: 'el-select',
+                  customCell: {
+                    type: 'el-select',
+                    options
+                  }
+                }),
+                formCellColumn({
+                  label: 'textarea',
+                  prop: 'textarea',
+                  width: 200,
+                  customCell: {
+                    type: 'textarea',
+                    props: { rows: 1 }
+                  }
+                }),
+                operateColumn([{ label: '删除', prop: 'delete', type: 'danger', icon: markRaw(Delete), unfold: true }])
+              ]
+            }
+          }
+        ]
+      },
+      {
         label: 'table',
         children: [
           {
             prop: 'rowData',
             type: 'table',
             props: {
-              size: 'auto',
+              height: 600,
               columns: [
                 formCellColumn({
                   label: '姓名',
@@ -265,7 +449,7 @@ const schema = computed(() => [
                   width: 200,
                   customCell: {
                     type: 'textarea',
-                    props: { rows: 2 }
+                    props: { rows: 1 }
                   }
                 }),
                 operateColumn([{ label: '删除', prop: 'delete', type: 'danger', icon: markRaw(Delete), unfold: true }])
@@ -294,28 +478,26 @@ const init = () => {
     name: '',
     age: 0,
     sex: '',
-    rowData: [
-      {
-        name: '',
-        age: 0,
-        sex: '',
-        switch: false,
-        rate: 0,
-        color: '',
-        slider: 0,
-        textarea: ''
-      },
-      {
-        name: '',
-        age: 0,
-        sex: '',
-        switch: false,
-        rate: 0,
-        color: '',
-        slider: 0,
-        textarea: ''
-      }
-    ]
+    rowData: Array.from({ length: 10 }).map((_, i) => ({
+      name: 'name' + i,
+      age: i,
+      sex: '',
+      switch: false,
+      rate: 0,
+      color: '',
+      slider: 0,
+      textarea: ''
+    })),
+    rowData2: Array.from({ length: 100 }).map((_, i) => ({
+      name: 'name' + i,
+      age: i,
+      sex: '',
+      switch: false,
+      rate: 0,
+      color: '',
+      slider: 0,
+      textarea: ''
+    }))
   }
 }
 
