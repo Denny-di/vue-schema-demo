@@ -130,7 +130,7 @@ const schema = computed(() => [
         ]
       },
       {
-        label: 'table：大量数据急速渲染',
+        label: 'table-大量表单数据急速渲染',
         children: [
           {
             prop: 'rowData2',

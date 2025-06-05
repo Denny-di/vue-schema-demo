@@ -16,6 +16,7 @@ export const bindModels = (models: ModelType[] = [], modelValue: Ref) =>
 /**
  * 保留2位小数
  * @param value
+ * @param precision 精度 默认: 2
  * @returns
  */
 export const mathFormat = (v: number, precision = 2) => {

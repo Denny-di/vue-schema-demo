@@ -65,7 +65,13 @@ export interface FilterOptionType {
   clearFields?: string[]
 }
 
-export interface ActionOptionType {
+interface MessageType {
+  title?: string
+  msg?: string | VNode | ((...args: any[]) => any)
+  dangerouslyUseHTMLString?: boolean
+}
+
+export interface ActionOptionType extends MessageType {
   props?: any
   label: string
   prop: string
@@ -89,7 +95,7 @@ export interface SwitchPropsType {
   >
 }
 
-export interface OperateOptionType {
+export interface OperateOptionType extends MessageType {
   label: string
   prop: string
   type?: 'primary' | 'danger' | 'default' | 'warning' | 'success' | 'info'

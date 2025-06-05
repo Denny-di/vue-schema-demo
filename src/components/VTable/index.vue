@@ -29,7 +29,7 @@ const {
   afterRequest,
   closeDefaultRequest,
   apiParams,
-  code,
+  code: tableCode,
   data,
   columns: columnsList,
   tabsProps,
@@ -72,7 +72,7 @@ const currentTab = computed(() => tabsProps?.options?.find((f) => f.value === ta
 const switchMode = computed(() => tableSwitchRef.value?.modelValue)
 const currentMode = computed(() => switchProps?.options?.find((f) => f.value === switchMode.value))
 
-const tableCode = computed(() => currentTab.value?.code ?? switchMode.value ?? code ?? tabMode.value)
+const code = computed(() => currentTab.value?.code ?? switchMode.value ?? tableCode ?? tabMode.value)
 const fetchApi = computed(() => currentTab.value?.api ?? currentMode.value?.api ?? api)
 
 const columns = computed(() => currentTab.value?.columns ?? currentMode.value?.columns ?? columnsList ?? [])
@@ -137,7 +137,7 @@ const cellChange = (prop: string, opt: any = {}) => {
 }
 
 const actionChange = async (prop: string, opt: ActionOptionType) => {
-  const { isCheckRow, reconfirm, label } = opt
+  const { isCheckRow, reconfirm, label, title, msg, dangerouslyUseHTMLString } = opt
   const rows = xTableRef.value?.getSelectionRows?.() ?? []
   if (isCheckRow && !rows.length) {
     ElMessage.warning('请至少选择一条数据')
@@ -145,8 +145,10 @@ const actionChange = async (prop: string, opt: ActionOptionType) => {
   }
   try {
     let cb: any = null
-    if (reconfirm) {
-      await ElMessageBox.confirm(`确认是否${label}？`)
+    if (reconfirm || msg) {
+      await ElMessageBox.confirm(msg ? (typeof msg === 'function' ? msg(rows) : msg) : `确认是否${label}？`, title, {
+        dangerouslyUseHTMLString
+      })
       cb = () => {
         ElMessage.success(`${label}成功`)
         tableChange('init')
@@ -226,7 +228,7 @@ defineExpose({
           ref="xTableRef"
           v-loading="tableLoading"
           :row-data="rowData"
-          :code="tableCode"
+          :code="code"
           :columns="columns"
           v-bind="$attrs"
           @cell-change="cellChange"

@@ -1,4 +1,6 @@
 <script setup lang="ts" name="">
+import { sum } from 'mathjs'
+
 interface Props {
   code?: string
   rowData?: any[]
@@ -92,7 +94,7 @@ const summaryMethod = ({ columns, data }: any) => {
     const { property: prop } = column
     if (summaryProps?.includes(prop)) {
       const values = data.map((m: any) => Number(m[prop]) || 0)
-      sums[index] = values.reduce((a: number, b: number) => a + b, 0)
+      sums[index] = String(mathFormat(sum(values)))
     } else sums[index] = '-'
   })
   return sums
