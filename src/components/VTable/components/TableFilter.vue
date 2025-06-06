@@ -1,9 +1,10 @@
 <script setup lang="ts" name="TableFilter">
 interface Props {
+  code?: string
   filterOptions?: FilterOptionType[]
 }
 
-const { filterOptions = [] } = defineProps<Props>()
+const { code, filterOptions = [] } = defineProps<Props>()
 
 const emit = defineEmits(['change'])
 
@@ -36,10 +37,11 @@ watchEffect(() => {
 
 const formRef = ref()
 
-const change = (item?: Partial<FilterOptionType>, value?: any) => {
-  const { prop, child, clearFields, options } = item ?? {}
+const cacheForm: Record<string, any> = {}
 
-  console.log('TableFilter change => ', prop, value, form.value)
+const change = (item?: Partial<FilterOptionType>, opt?: any) => {
+  const { prop, child, clearFields, options } = item ?? {}
+  const { value, oldValue } = opt ?? {}
   if (clearFields?.length) {
     for (const key of clearFields) {
       delete form.value[key]
@@ -48,13 +50,15 @@ const change = (item?: Partial<FilterOptionType>, value?: any) => {
 
   const childProp = child?.prop
   if (childProp && options?.length) {
-    const flag = !form.value[childProp] || !form.value[childProp]?.length
-    for (const opt of options) {
-      delete form.value[opt.value as string]
+    const flag = !form.value[oldValue] || !form.value[oldValue]?.length
+    for (const o of options) {
+      delete form.value[o.value as string]
     }
     if (flag) return
   }
+
   emit('change', prop ? { [prop]: value, prop, value } : undefined)
+  if (code) cacheForm[code] = form.value
 }
 
 const clear = () => {
@@ -69,6 +73,11 @@ const reset = () => {
 const filterParams = computed(() => {
   const params: any = {}
   for (const key in form.value) {
+    if (key.includes('batch__')) {
+      const prop = key.replace('batch__', '')
+      params[form.value[prop]] = form.value[key]
+      continue
+    }
     if (key.includes('custom__')) continue
 
     if (form.value[key]?.length && key.includes('-')) {
@@ -83,10 +92,16 @@ const filterParams = computed(() => {
   return params
 })
 
+const init = () => {
+  clear()
+  if (code) form.value = cacheForm[code] ?? {}
+}
+
 defineExpose({
   filterParams,
   clear,
-  reset
+  reset,
+  init
 })
 </script>
 
@@ -98,6 +113,7 @@ defineExpose({
           <el-form-item v-if="item.prop" :prop="item.prop" :class="{ 'cascade-select': item.child }">
             <VFilter
               v-model="form[item.prop]"
+              v-model:form="form"
               :props="{ clearable: !item.child }"
               :width="item.child ? 130 : undefined"
               v-bind="item"
@@ -106,7 +122,12 @@ defineExpose({
           </el-form-item>
 
           <el-form-item v-if="item.child?.prop">
-            <VFilter v-model="form[item.child.prop]" v-bind="item.child" @change="change(item.child, $event)" />
+            <VFilter
+              v-model="form[item.child.prop]"
+              v-model:form="form"
+              v-bind="item.child"
+              @change="change(item.child, $event)"
+            />
           </el-form-item>
         </div>
       </template>

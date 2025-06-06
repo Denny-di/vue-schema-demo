@@ -9,14 +9,13 @@ const { labelWidth = 120 } = defineProps<Props>()
 const emit = defineEmits(['change'])
 
 const slots = defineSlots()
-const slotsName = Object.keys(slots)
+const slotsName = Object.keys(slots).filter((name) => name !== 'default')
 
 const model = defineModel<any>('model')
 
 const change = (...args: any[]) => emit('change', ...args)
 
 const formRef = ref()
-
 const validate = async () => {
   console.log('validate form =>', model.value)
   return await formRef.value?.validate()

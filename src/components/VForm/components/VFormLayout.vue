@@ -12,7 +12,7 @@ const { schema, gutter = 20, colSpan = 3 } = defineProps<Props>()
 const emit = defineEmits(['change'])
 
 const slots = defineSlots()
-const slotsName = Object.keys(slots)
+const slotsName = Object.keys(slots).filter((name) => name !== 'default')
 
 const model = defineModel<any>('model')
 
@@ -37,7 +37,6 @@ const change = (...args: any[]) => emit('change', ...args)
                 v-bind="$attrs"
                 @change="change"
               >
-                <!-- 自定义插槽 -->
                 <template v-for="slotName in slotsName" :key="slotName" #[slotName]="slotProps">
                   <slot :name="slotName" v-bind="slotProps"></slot>
                 </template>
@@ -48,7 +47,7 @@ const change = (...args: any[]) => emit('change', ...args)
 
         <el-form-item v-else class="w-full mr-0" :label="item.label" :prop="item.prop" v-bind="item.itemProps">
           <slot v-if="slotsName.includes(item.prop)" :name="item.prop" v-bind="item"> </slot>
-          <VFormItem v-else v-model="model[item.prop]" v-bind="item" @change="change">
+          <VFormItem v-else v-model="model[item.prop]" v-model:form="model" v-bind="item" @change="change">
             <template v-for="slotName in slotsName" :key="slotName" #[slotName]="slotProps">
               <slot :name="slotName" v-bind="slotProps"></slot>
             </template>
@@ -56,6 +55,7 @@ const change = (...args: any[]) => emit('change', ...args)
         </el-form-item>
       </el-col>
     </template>
+    <slot></slot>
   </el-row>
 </template>
 

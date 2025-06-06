@@ -6,6 +6,7 @@ export interface SchemaType {
   events?: any
   props?: any
   itemProps?: any
+  content?: any
   appendProps?: any
   hidden?: boolean
   options?: any[]
@@ -31,6 +32,7 @@ export type FormComponentType =
   | 'textarea'
   | 'table'
   | 'text'
+  | 'content'
   | 'options'
 
 export type ModelType = 'modelValue' | string

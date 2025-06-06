@@ -5,6 +5,7 @@ interface Props {
   prop?: string
   events?: any
   props?: any
+  extraProps?: string[]
   apiProps?: any
   appendProps?: any
   models?: ModelType[]
@@ -14,6 +15,7 @@ interface Props {
   labelKey?: string
   disabled?: boolean
   disableModel?: boolean
+  content?: string
 }
 
 type CmponentsType = {
@@ -21,10 +23,12 @@ type CmponentsType = {
 }
 
 const {
+  prop,
   models,
   type = 'text',
   events = {},
   props,
+  extraProps,
   apiProps,
   modelName,
   options: opts,
@@ -43,30 +47,43 @@ const model = defineModel<any>({
   set: (value) => (disableModel ? model.value : value)
 })
 
+const form = defineModel<any>('form')
+
 const modelKey = computed(() => modelName ?? 'modelValue')
 
 const focusOptions = ref<any[]>([])
 const loading = ref(false)
+const cacheParams = ref<any>()
 const focus = async () => {
   try {
-    const { api, apiParams } = apiProps ?? {}
-    if (!api) return
+    const { api, apiParams, cb } = apiProps ?? {}
+    if (!api || isEqual(cacheParams.value, apiParams)) return
+    cacheParams.value = apiParams
     loading.value = true
-    const data = await api(apiParams)
+    const data = await api(apiParams, prop)
     focusOptions.value = data ?? []
+    cb?.(data)
+  } catch (error) {
+    console.error(error)
+    focusOptions.value = []
+    cacheParams.value = undefined
   } finally {
     loading.value = false
+    events?.focus?.(focusOptions.value)
   }
 }
 
-const options = computed(() =>
-  (focusOptions.value?.length ? focusOptions.value : opts)
-    ?.map((m: any) => ({
-      ...m,
-      value: m[valueKey],
-      label: m[labelKey]
-    }))
-    ?.filter((m: any) => !!m.value)
+const options = computed(
+  () =>
+    (focusOptions.value?.length ? focusOptions.value : opts)
+      ?.map((m: any) => ({
+        ...m,
+        value: m[valueKey],
+        label: m[labelKey]
+      }))
+      ?.filter((m: any) => !isEmpty(m.value)) ??
+    apiProps?.cacheData ??
+    []
 )
 
 const formatMap: CmponentsType = {
@@ -85,7 +102,25 @@ const setValue = (value: any) => {
 
 const modelValue = computed({
   get: () => setValue(model.value),
-  set: (val) => (model.value = val)
+  set: (val) => {
+    model.value = val
+
+    if (form.value && extraProps?.length) {
+      if (bindProps.value?.multiple) {
+        const opts = options.value?.filter((m: any) => val.includes(m.value))
+        for (const item of extraProps) {
+          const [field, key] = item.split('-')
+          form.value[field] = Array.from(new Set(opts?.map((m: any) => m[key ?? field])))
+        }
+      } else {
+        const opt = options.value?.find((m: any) => m.value === val)
+        for (const item of extraProps) {
+          const [field, key] = item.split('-')
+          form.value[field] = opt?.[key ?? field]
+        }
+      }
+    }
+  }
 })
 
 const componentMap: CmponentsType = {
@@ -114,6 +149,7 @@ const propsMap: CmponentsType = {
     clearable: true,
     filterable: true,
     collapseTags: true,
+    showAllLevels: false,
     collapseTagsTooltip: true
   },
   'el-tree-select': {
@@ -132,18 +168,8 @@ const propsMap: CmponentsType = {
     precision: 0,
     controlsPosition: 'right'
   },
-  'textarea': {
-    placeholder: '请输入',
-    type: 'textarea',
-    maxlength: 255,
-    rows: 3
-  },
-  'date': {
-    placeholder: '请选择',
-    type: 'date',
-    valueFormat: 'YYYY-MM-DD',
-    clearable: true
-  },
+  'textarea': { placeholder: '请输入', type: 'textarea', maxlength: 255, rows: 3 },
+  'date': { placeholder: '请选择', type: 'date', valueFormat: 'YYYY-MM-DD', clearable: true },
   'daterange': {
     type: 'daterange',
     shortcuts,
@@ -153,6 +179,30 @@ const propsMap: CmponentsType = {
     valueFormat: 'YYYY-MM-DD'
   }
 }
+
+const cellChange = (prop?: string, opt: any = {}) => {
+  if (prop === 'delete') {
+    const { rowIndex } = opt
+    model.value.splice(rowIndex, 1)
+  }
+  emit('change', prop, opt)
+}
+
+const change = (value: any) => {
+  emit('change', prop, { value })
+  events?.change?.({
+    prop,
+    value,
+    options: options.value,
+    current: options.value?.find((f: any) => f.value === value)
+  })
+}
+
+const bindEvents = computed(() => ({
+  ...events,
+  change,
+  focus
+}))
 
 const bindProps = computed(() => {
   const p = {
@@ -170,26 +220,11 @@ const bindProps = computed(() => {
 
   if (type === 'el-cascader' && !p.props?.emitPath) {
     if (p.props) p.props.emitPath = false
-    else p.props = { emitPath: false }
+    else p.props = { multiple: p.multiple, emitPath: false }
   }
-
   if (p.max && p.max < 0) p.max = 999999999
   return p
 })
-
-const bindEvents = computed(() => ({
-  focus,
-  ...events
-}))
-
-const change = (prop?: string, opt: any = {}) => {
-  console.log('form change =>', prop, opt)
-  if (prop === 'delete') {
-    const { rowIndex } = opt
-    model.value.splice(rowIndex, 1)
-  }
-  emit('change', prop, opt)
-}
 
 const isEmpty = (val: string | null | undefined) => [undefined, null, ''].includes(val)
 </script>
@@ -202,7 +237,6 @@ const isEmpty = (val: string | null | undefined) => [undefined, null, ''].includ
       v-model="modelValue"
       class="w-full"
       v-bind="bindProps"
-      @change="change(prop, { value: $event })"
       v-on="bindEvents"
     >
       <template v-if="type === 'el-radio-group'">
@@ -236,8 +270,7 @@ const isEmpty = (val: string | null | undefined) => [undefined, null, ''].includ
       simple
       hide-pagination
       v-bind="bindProps"
-      @cell-change="change"
-      v-on="bindEvents"
+      @cell-change="cellChange"
     >
       <template v-if="appendProps" #append>
         <slot name="append-slot"></slot>
@@ -248,8 +281,8 @@ const isEmpty = (val: string | null | undefined) => [undefined, null, ''].includ
         <slot :name="slotName" :prop="prop" v-bind="scope"></slot>
       </template>
     </VTable>
-
-    <span v-else-if="type === 'text'" class="truncate" :title="modelValue">{{ modelValue }}</span>
+    <div v-else-if="type === 'content'" v-bind="bindProps">{{ content ?? '-' }}</div>
+    <span v-else-if="type === 'text'" class="truncate" :title="modelValue">{{ modelValue ?? '-' }}</span>
     <template v-else-if="type === 'options'">
       {{ options?.find((m: any) => m.value === modelValue)?.label }}
     </template>
@@ -260,7 +293,6 @@ const isEmpty = (val: string | null | undefined) => [undefined, null, ''].includ
       v-model:[modelKey]="modelValue"
       class="w-full"
       v-bind="bindProps"
-      @change="change(prop, { value: $event })"
       v-on="bindEvents"
     >
       <template v-for="slotName in slotsName" :key="slotName" #[slotName]="scope">

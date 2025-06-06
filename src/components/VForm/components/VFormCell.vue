@@ -9,80 +9,100 @@ interface Props {
   type: FormComponentType
   value?: any
   prop: string
-  row: any
   rowIndex: number
-  extraFields?: string[]
   rules?: any
   options?: any[]
+  optionKey?: string
   valueKey?: string
   labelKey?: string
   events?: any
-  props?: any
   apiProps?: any
-  isProps?: (row: any) => any
   isApiProps?: (row: any) => any
+  props?: any
+  isProps?: (row: any) => any
   isDisabled?: (row: any) => boolean
 }
 const {
   type,
   prop,
-  row,
   rowIndex,
-  extraFields,
   events,
+  props,
   options: opts,
+  optionKey,
   valueKey = 'value',
   labelKey = 'label',
-  props,
   apiProps,
-  isProps,
   isApiProps,
+  isProps,
   isDisabled
 } = defineProps<Props>()
 
 const emit = defineEmits<{
   'cell-change': [prop: string, opt?: any]
-  'update:row': [row: any]
 }>()
+
+const modelRow = defineModel<any>('row')
 
 const formDisabled = useFormDisabled()
 const parentFormItem = useFormItem()
 
-const options = computed(() =>
-  opts
-    ?.map((m: any) => ({
-      ...m,
-      value: m[valueKey],
-      label: m[labelKey]
-    }))
-    ?.filter((m: any) => !isEmpty(m.value))
+const change = (opt?: any) => {
+  emit('cell-change', prop, { value: modelValue.value, row: modelRow.value, rowIndex })
+  events?.change?.({ ...opt, row: modelRow.value, rowIndex })
+}
+
+const bindEvents = {
+  ...events,
+  visibleChange: (v: boolean) => {
+    nextTick(() => {
+      visible.value = v
+      events?.visibleChange?.(v)
+    })
+  },
+  change
+}
+
+const bindProps = computed(() => ({
+  ...props,
+  ...isProps?.(modelRow.value)
+}))
+
+const focusOptions = ref<any[]>([])
+const bindApiProps = computed(() => ({
+  ...apiProps,
+  ...isApiProps?.(modelRow.value),
+  cb: (data: any) => {
+    focusOptions.value = data
+  }
+}))
+
+const options = computed(
+  () =>
+    (focusOptions.value?.length ? focusOptions.value : optionKey ? modelRow.value[optionKey] : opts)
+      ?.map((m: any) => ({
+        ...m,
+        value: m[valueKey],
+        label: m[labelKey]
+      }))
+      ?.filter((m: any) => !isEmpty(m.value)) ??
+    bindApiProps.value?.cacheData ??
+    []
 )
 
 const cellDisabled = computed(
-  () => formDisabled.value || isDisabled?.(row) || props?.disabled || isProps?.(row)?.disabled
+  () => formDisabled.value || isDisabled?.(modelRow.value) || props?.disabled || isProps?.(modelRow.value)?.disabled
 )
 const modelValue = computed({
-  get: () => row[prop],
+  get: () => modelRow.value[prop],
   set(val) {
-    const data = { [prop]: val }
-    if (extraFields?.length) {
-      const currentOpt = options.value?.find((m: any) => m.value === val)
-      for (const item of extraFields) {
-        const [field, key] = item.split('-')
-        data[field] = currentOpt?.[key ?? field]
-      }
-    }
-    emit('update:row', Object.assign(row, data))
+    modelRow.value[prop] = val
   }
 })
 
 const isVisible = ['el-select', 'el-select-v2', 'date'].includes(type)
 
 const visible = ref(false)
-
-const change = () => {
-  emit('cell-change', prop, { value: modelValue.value, row, rowIndex })
-}
 
 const clear = () => {
   modelValue.value = undefined
@@ -93,25 +113,18 @@ const mouseenter = () => {
   visible.value = true
 }
 
-const bindProps = {
-  ...props,
-  ...isProps?.(row)
-}
-
-const bindApiProps = {
-  ...apiProps,
-  ...isApiProps?.(row)
-}
-
-const bindEvents = {
-  visibleChange: (v: boolean) => {
-    visible.value = v
-  },
-  ...events
-}
-
 const isEmpty = (val: string | null | undefined) =>
   [undefined, null, ''].includes(val) || (Array.isArray(val) && !val.length)
+
+const getLabel = (val: any, list: any[]): any => {
+  if (!val || !list?.length) return
+  const item = list?.find((m: any) => m.value === val)
+  if (item) return item?.label
+  for (const opt of list) {
+    const label = getLabel(val, opt.children)
+    if (label) return label
+  }
+}
 </script>
 
 <template>
@@ -136,7 +149,7 @@ const isEmpty = (val: string | null | undefined) =>
           + {{ value.length }}
         </span>
         <span v-else-if="!isEmpty(value)">
-          {{ options?.find((m: any) => m.value === modelValue)?.label ?? value }}
+          {{ getLabel(value, options) ?? value }}
         </span>
         <span v-else class="placeholder">请选择</span>
         <el-icon v-if="!!type"><ArrowDown /></el-icon>
@@ -149,9 +162,10 @@ const isEmpty = (val: string | null | undefined) =>
     <VFormItem
       v-else-if="!!type"
       v-model="modelValue"
+      v-model:form="modelRow"
       :type="type"
       :prop="prop"
-      :disabled="isDisabled?.(row)"
+      :disabled="isDisabled?.(modelRow)"
       :props="bindProps"
       :api-props="bindApiProps"
       :events="bindEvents"
@@ -159,7 +173,6 @@ const isEmpty = (val: string | null | undefined) =>
       :value-key="valueKey"
       :label-key="labelKey"
       v-bind="$attrs"
-      @change="change"
     />
 
     <template v-else> {{ modelValue }}</template>
@@ -254,7 +267,7 @@ const isEmpty = (val: string | null | undefined) =>
     height: 2em;
   }
   > span {
-    line-height: 1;
+    line-height: 30px;
     max-width: 80%;
     display: inline-block;
     overflow: hidden;

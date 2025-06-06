@@ -15,8 +15,6 @@ const defaultSpan = (type?: string) => (type && ['divider', 'tab', 'table'].incl
 
 <template>
   <div class="v-form-panel">
-    <slot></slot>
-
     <el-row class="!ml-0 !mr-0" :gutter="gutter">
       <template v-for="item in panel" :key="item.prop">
         <template v-if="!item.hidden">
